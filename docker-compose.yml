@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres
+    container_name: expert-education-db-prod
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: expert_education_prod
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  api:
+    container_name: expert-education-backend-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production # Use production stage for production environment
+    env_file:
+      - ./.env.production
+    ports:
+      - "80:8080" # Map internal port 8080 to 80 for production
+    depends_on:
+      - db

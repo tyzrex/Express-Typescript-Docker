@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres
+    container_name: expert-education-db-dev
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: expert_education_dev
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+
+  api:
+    container_name: expert-education-backend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development # Use development stage for dev environment
+    env_file:
+      - ./.env.dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./:/app # Live reload
+      - /app/node_modules # Prevents conflicts with local node_modules
+
+volumes:
+  db-data:
